@@ -1,0 +1,21 @@
+DataSet:
+
+create table adobe_transactions(customer_id int, product varchar(25), revenue int);
+insert into adobe_transactions values(123,'Photoshop',50),(123,'Premier Pro',100),(123,'After Effects',50),(234,'Illustrator',200),(234,'Premier Pro',100);
+
+Solution:-
+with cte as(
+select customer_id from adobe_transactions
+where product='Photoshop'),
+cte2 as(
+select customer_id ,product ,revenue from  adobe_transactions
+where customer_id in (select customer_id from cte)
+and product != 'Photoshop')
+select customer_id ,sum(revenue) as amount
+from cte2 group by customer_id order by customer_id
+
+output:-
+123 150 
+
+
+
