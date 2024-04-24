@@ -1,0 +1,25 @@
+create table purchases(
+	user_id int,
+	product_id int,
+	quantity int,
+	purchase_date datetime
+);
+
+insert into purchases values(536, 3223, 6, '01/11/2022 12:33:44');
+insert into purchases values(827, 3585, 35, '02/20/2022 14:05:26');
+insert into purchases values(536, 3223, 5, '03/02/2022 09:33:28');
+insert into purchases values(536, 1435, 10, '03/02/2022 08:40:00');
+insert into purchases values(827, 2452, 45, '04/09/2022 00:00:00');
+
+
+Solution:-
+with cte as(
+select p1.user_id ,p1.product_id,p1.quantity,p1.purchase_date 
+from purchases p1 join purchases p2 
+on p1.user_id=p2.user_id and p1.product_id =p2.product_id 
+and p1.purchase_date!=p2.purchase_date )
+select count(distinct user_id) as num from cte
+
+output:-
+num
+1
