@@ -1,0 +1,36 @@
+create table employee 
+(
+emp_name varchar(10),
+dep_id int,
+salary int
+);
+delete from employee;
+insert into employee values 
+('Siva',1,30000),('Ravi',2,40000),('Prasad',1,50000),('Sai',2,20000)
+
+
+Solution:-
+with cte as(
+select *,dense_rank() over( partition by dep_id order by salary desc) as rn
+from employee),
+temp as(
+select dep_id,emp_name as emp_name_max_salary  from
+cte where rn=1),
+cte2 as(
+select *,dense_rank() over( partition by dep_id order by salary asc ) as rn
+from employee),
+temp1 as(
+select dep_id,emp_name as emp_name_min_salary   from
+cte2 where rn=1)
+select  temp.dep_id ,emp_name_max_salary,
+(select emp_name_min_salary from temp1
+where temp.dep_id =temp1.dep_id) as emp_name_min_salary
+from temp
+
+Output:-
+dep_id	emp_name_max_salary	emp_name_min_salary
+1	          Prasad	           Siva
+2	          Ravi	             Sai
+
+
+
