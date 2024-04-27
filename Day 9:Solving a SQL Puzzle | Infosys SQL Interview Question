@@ -1,0 +1,30 @@
+Question:-
+create table input (
+id int,
+formula varchar(10),
+value int
+)
+insert into input values (1,'1+4',10),(2,'2+1',5),(3,'3-2',40),(4,'4-1',20);
+
+Solution:-
+with cte as(
+select *,left(formula,1) as d1 , substring(formula,2,1) as mid, right(formula,1) as d2 from input),
+cte2 as(
+select cte.id,cte.formula,cte.value, mid as sig,i1.value as first_value,i2.value as second_value
+from cte 
+inner join input  i1 on cte.d1= i1.id
+inner join input i2 on  cte.d2= i2.id)
+
+select cte2.id, cte2.formula, cte2.value,
+case when cte2.sig ='+'
+then cte2.first_value+cte2.second_value
+when cte2.sig ='-'
+then cte2.first_value-cte2.second_value
+end as final_result
+from cte2;
+
+Result:-
+1	1+4	10	30
+2	2+1	5	  15
+3	3-2	40	35
+4	4-1	20	10
