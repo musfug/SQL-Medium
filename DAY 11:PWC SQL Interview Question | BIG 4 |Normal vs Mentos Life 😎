@@ -1,0 +1,33 @@
+create table company_revenue 
+(
+company varchar(100),
+year int,
+revenue int
+)
+
+insert into company_revenue values 
+('ABC1',2000,100),('ABC1',2001,110),('ABC1',2002,120),('ABC2',2000,100),('ABC2',2001,90),('ABC2',2002,120)
+,('ABC3',2000,500),('ABC3',2001,400),('ABC3',2002,600),('ABC3',2003,800);
+
+with cte as(
+select *, rank() over(partition by company order by revenue desc ) as rn ,
+rank() over(partition by company order by year desc ) as rn1 ,
+rank() over(partition by company order by revenue desc ) - rank() over(partition by company order by year desc ) as final
+from company_revenue ),
+cte2 as (
+select company, 
+sum(case when final=0 
+then 1 
+else 0 end) as c1
+from cte 
+group by company ),
+cte3 as(
+select company,count(*)  as c2
+from company_revenue
+GROUP by company)
+select distinct cte2.company from  cte2 join cte3 
+on cte2.c1=cte3.c2;
+
+Output
+company 
+abc1
