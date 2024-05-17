@@ -1,0 +1,39 @@
+Question:-
+create table candidates (
+emp_id int,
+experience varchar(20),
+salary int
+);
+delete from candidates;
+insert into candidates values
+(1,'Junior',10000),(2,'Junior',15000),(3,'Junior',40000),(4,'Senior',16000),(5,'Senior',20000),(6,'Senior',50000);
+
+Solution:-
+with cte as(  
+select * ,
+sum(salary) over(partition by experience order by salary) as run_sum
+from candidates 
+order by experience desc),
+
+senior as(
+select * from cte
+where experience='Senior'
+and run_sum<=70000),
+
+junior as(
+select * from cte
+where experience='Junior'
+and run_sum<= 70000-(select max(run_sum) from senior))
+
+select * from senior 
+union all
+select * from junior
+
+
+Output:-
+emp_id	experience	salary	run_sum
+4      	Senior	  16000	   16000
+5	     Senior	   20000	   36000
+1	    Junior	  10000	     10000
+2	    Junior	   15000	   25000
+
